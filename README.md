@@ -1,4 +1,4 @@
-# PENTRA-SCAN
+# PENTRA-SCAN (UNDER DEVELOPEMENT)
 
 ![PENTRA-SCAN Logo](pentra_scan_logo.png)
 
