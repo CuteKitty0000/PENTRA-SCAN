@@ -53,8 +53,6 @@ PENTRA-SCAN is a Python-based automated web pentesting and vulnerability discove
 
 ### Process Flow
 
-![Process Flow Diagram](process_flow_diagram.png)
-
 ---
 
 **PENTRA-SCAN** offers a comprehensive solution for automated web pentesting and vulnerability discovery, empowering organizations to enhance their security posture effectively and efficiently.
