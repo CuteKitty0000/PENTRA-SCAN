@@ -24,4 +24,5 @@ vulnerabilities = [
     ("Open Ports", "Check for open ports on the system.", "Close unnecessary ports to reduce the attack surface."),
     ("Outdated Protocols", "Check for outdated protocols in use.", "Disable outdated protocols to prevent security vulnerabilities."),
     ("Physical Security", "Check for physical security vulnerabilities.", "Secure physical access to prevent unauthorized access to hardware."),
+    # Add more vulnerabilities here
 ]
