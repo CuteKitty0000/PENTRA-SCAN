@@ -2,7 +2,6 @@ import subprocess
 import psutil
 import logging
 import pyvas
-from tqdm import tqdm
 from vuln_info import vulnerabilities
 
 logging.basicConfig(filename='security_assessment.log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
@@ -24,34 +23,34 @@ def is_firewall_enabled():
 
 def check_vulnerabilities():
     try:
+        # Connect to Tenable.sc
         sc = pyvas.connect('<Tenable.sc IP>', '<username>', '<password>')
+
+        # Get the list of vulnerabilities
         vulnerabilities_list = sc.analysis.vulnerabilities()
 
-        with tqdm(total=len(vulnerabilities_list), desc='Scanning for vulnerabilities', unit='vulnerability') as pbar:
-            for vuln in vulnerabilities_list:
-                pbar.update(1)
-                if vuln in vulnerabilities:
-                    print(f"- {vuln[0]}: {vuln[1]}")
+        # Print the list of vulnerabilities
+        for vuln in vulnerabilities_list:
+            print(f"Tenable.sc Vulnerability: {vuln}")
     except Exception as e:
         logging.error(f"Error retrieving vulnerabilities from Tenable.sc: {e}")
 
 def check_security():
     print("Security Assessment Report:")
     print("=" * 30)
-    security_issues = []
     for vulnerability, info, mitigation in vulnerabilities:
+        print("\n", "-" * 50)
+        print(f"{vulnerability}: {info}")
         try:
             if "Windows Defender" in vulnerability and not is_defender_running():
-                security_issues.append(f"Vulnerability detected: {vulnerability}. {mitigation}")
+                print(f"   - Vulnerability detected. {mitigation}")
             elif "Firewall" in vulnerability and not is_firewall_enabled():
-                security_issues.append(f"Vulnerability detected: {vulnerability}. {mitigation}")
+                print(f"   - Vulnerability detected. {mitigation}")
+            # Add more vulnerability checks here...
+            else:
+                print("   - No vulnerability detected.")
         except Exception as e:
             logging.error(f"Error checking {vulnerability}: {e}")
-
-    if security_issues:
-        print("\n".join(security_issues))
-    else:
-        print("No vulnerabilities detected.")
 
 if __name__ == "__main__":
     check_vulnerabilities()
