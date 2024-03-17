@@ -4,7 +4,7 @@ import logging
 import pyvas
 from vuln_info import vulnerabilities
 
-# Set up logging
+# Done by Navaneetha Krishnan
 logging.basicConfig(filename='security_assessment.log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
 
 def is_defender_running():
