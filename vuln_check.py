@@ -1,31 +1,40 @@
 import subprocess
-import winreg
 import psutil
+import logging
+import pyvas
 from vuln_info import vulnerabilities
 
+# Set up logging
+logging.basicConfig(filename='security_assessment.log', level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s')
+
 def is_defender_running():
-    return any("MsMpEng.exe" in proc.name() for proc in psutil.process_iter())
+    try:
+        return any("MsMpEng.exe" in proc.name() for proc in psutil.process_iter())
+    except Exception as e:
+        logging.error(f"Error checking Windows Defender: {e}")
+        return False
 
 def is_firewall_enabled():
-    output = subprocess.run(["netsh", "advfirewall", "show", "allprofiles", "state"], capture_output=True, text=True)
-    return "Firewall state: On" in output.stdout
+    try:
+        output = subprocess.run(["ufw", "status"], capture_output=True, text=True)
+        return "Status: active" in output.stdout
+    except Exception as e:
+        logging.error(f"Error checking firewall status: {e}")
+        return False
 
-def is_uac_enabled():
-    key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System")
-    value, _ = winreg.QueryValueEx(key, "EnableLUA")
-    return value == 1
+def check_vulnerabilities():
+    try:
+        # Connect to Tenable.sc
+        sc = pyvas.connect('<Tenable.sc IP>', '<username>', '<password>')
 
-def is_rdp_enabled():
-    output = subprocess.run(["reg", "query", "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server"], capture_output=True, text=True)
-    return "fDenyTSConnections    REG_DWORD    0x0" in output.stdout
+        # Get the list of vulnerabilities
+        vulnerabilities = sc.analysis.vulnerabilities()
 
-def is_secureboot_enabled():
-    output = subprocess.run(["bcdedit"], capture_output=True, text=True)
-    return "Secure Boot State                 On" in output.stdout
-
-def is_bitlocker_enabled():
-    output = subprocess.run(["manage-bde", "-status"], capture_output=True, text=True)
-    return "Fully Encrypted" in output.stdout
+        # Print the list of vulnerabilities
+        for vuln in vulnerabilities:
+            print(f"Tenable.sc Vulnerability: {vuln}")
+    except Exception as e:
+        logging.error(f"Error retrieving vulnerabilities from Tenable.sc: {e}")
 
 def check_security():
     print("Security Assessment Report:")
@@ -33,19 +42,17 @@ def check_security():
     for vulnerability, info, mitigation in vulnerabilities:
         print("\n", "-" * 50)
         print(f"{vulnerability}: {info}")
-        if "Windows Defender" in vulnerability and not is_defender_running():
-            print(f"   - Vulnerability detected. {mitigation}")
-        elif "Windows Firewall" in vulnerability and not is_firewall_enabled():
-            print(f"   - Vulnerability detected. {mitigation}")
-        elif "User Account Control (UAC)" in vulnerability and not is_uac_enabled():
-            print(f"   - Vulnerability detected. {mitigation}")
-        elif "Remote Desktop Protocol (RDP)" in vulnerability and not is_rdp_enabled():
-            print(f"   - Vulnerability detected. {mitigation}")
-        elif "Secure Boot" in vulnerability and not is_secureboot_enabled():
-            print(f"   - Vulnerability detected. {mitigation}")
-        elif "BitLocker Drive Encryption" in vulnerability and not is_bitlocker_enabled():
-            print(f"   - Vulnerability detected. {mitigation}")
-        else:
-            print("   - No vulnerability detected.")
+        try:
+            if "Windows Defender" in vulnerability and not is_defender_running():
+                print(f"   - Vulnerability detected. {mitigation}")
+            elif "Firewall" in vulnerability and not is_firewall_enabled():
+                print(f"   - Vulnerability detected. {mitigation}")
+            # Add more vulnerability checks here...
+            else:
+                print("   - No vulnerability detected.")
+        except Exception as e:
+            logging.error(f"Error checking {vulnerability}: {e}")
 
-check_security()
+if __name__ == "__main__":
+    check_vulnerabilities()
+    check_security()
