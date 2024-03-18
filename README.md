@@ -47,6 +47,6 @@ PENTRA-SCAN is a Python-based automated web pentesting and vulnerability discove
 
 1. **Simple/Practical**: Easy-to-use interface for practical application.
 2. **Easy to Maintain/Modify**: Simplifies maintenance and modification of scripts.
-3. **Regular Update Checks**: Ensures scripts are updated regularly.
+3. **Regular Update Checks**: Ensure scripts are updated regularly.
 4. **Sandboxed Environment**: Provides a safe environment for testing.
 5. **Private API Integration**: Utilizes private API for script and package updates.
