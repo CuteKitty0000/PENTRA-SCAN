@@ -1,0 +1,71 @@
+FIRST COME FIRST SERVE (FCFS) PROCESS SCHEDULING
+
+#include<stdio.h>
+int main()
+{
+int bt[10]={0},wt[10]={0},ct[10]={0};
+float at[10]={0},tat[10]={0};
+int n,sum=0;
+float totalTAT=0,totalWT=0;
+printf("___FCFS CPU SCHEDULING___");
+printf("\n\nEnter number of process");
+scanf("%d",&n);
+printf("Enter arrival time and burst  time for each process\n\n");
+for(int i=0;i<n;i++)
+{
+printf("Arrival time of process[%d]",i+1);
+scanf("%f",&at[i]);
+printf("Burst time of process[%d] ",i+1);
+scanf("%d",&bt[i]);
+printf("\n");
+}
+for(int j=0;j<n;j++)
+{
+sum+=bt[j];
+ct[j]+=sum;
+}
+for( int k=0;k<n;k++)
+{
+tat[k]=ct[k]-at[k];
+totalTAT+=tat[k];
+}
+for(int k=0;k<n;k++)
+{
+wt[k]=tat[k]-bt[k];
+totalWT+=wt[k];
+}
+printf("Solution: \n\n");
+printf("P\t AT\t BT\t CT\t TAT\t WT\t\n\n");
+for(int i=0;i<n;i++)
+{
+printf("P%d\t %.2f\t %d\t %d\t %.2f\t %d\n",i+1,at[i],bt[i],ct[i],tat[i],wt[i]);
+}
+printf("\n\nAverage Turnaround time = %f\n",totalTAT/n);
+printf("Average WT = %f\n\n",totalWT/n);
+return 0;
+}
+
+COMMANDS:
+skcet@sk-mca-507:~$ gedit FCFS.c
+skcet@sk-mca-507:~$ cc FCFS.c
+skcet@sk-mca-507:~$ ./a.out
+
+INPUT:
+___FCFS CPU SCHEDULING___
+
+Enter number of process 5
+Enter arrival time and burst  time for each process
+
+Arrival time of process[1]0.0
+Burst time of process[1] 10
+
+Arrival time of process[2]1.1
+Burst time of process[2] 5
+
+Arrival time of process[3]3.1
+Burst time of process[3] 2
+
+Arrival time of process[4]5.1
+Burst time of process[4] 7
+Arrival time of process[5]7.1
+Burst time of process[5] 5
