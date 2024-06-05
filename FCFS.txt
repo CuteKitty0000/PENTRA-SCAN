@@ -1,71 +1,113 @@
-FIRST COME FIRST SERVE (FCFS) PROCESS SCHEDULING
+BANKER’S ALGORTIHM
+
+
 
 #include<stdio.h>
+
 int main()
+
 {
-int bt[10]={0},wt[10]={0},ct[10]={0};
-float at[10]={0},tat[10]={0};
-int n,sum=0;
-float totalTAT=0,totalWT=0;
-printf("___FCFS CPU SCHEDULING___");
-printf("\n\nEnter number of process");
-scanf("%d",&n);
-printf("Enter arrival time and burst  time for each process\n\n");
-for(int i=0;i<n;i++)
-{
-printf("Arrival time of process[%d]",i+1);
-scanf("%f",&at[i]);
-printf("Burst time of process[%d] ",i+1);
-scanf("%d",&bt[i]);
-printf("\n");
+
+int n,m,i,j,k;
+
+n=5;
+
+m=3;
+
+int alloc[5][3]={{0,1,0},{2,0,0},{3,0,2},{2,1,2},{0,0,2}};
+
+int max[5][3]={{7,5,3},{3,2,2},{9,0,2},{2,2,2},{4,3,3}};
+
+int avail[3]={3,3,2};
+
+int f[n],ans[n],ind=0;
+
+for(k=0;k<n;k++){
+
+f[k]=0;
+
 }
-for(int j=0;j<n;j++)
-{
-sum+=bt[j];
-ct[j]+=sum;
+
+int need[n][m];
+
+for(i=0;i<n;i++){
+
+for(j=0;j<m;j++){
+
+need[i][j]=max[i][j]-alloc[i][j];
+
+ }
+
 }
-for( int k=0;k<n;k++)
-{
-tat[k]=ct[k]-at[k];
-totalTAT+=tat[k];
+
+int y=0;
+
+for(k=0;k<5;k++){
+
+for(i=0;i<n;i++){
+
+if(f[i]==0){
+
+int flag=0;
+
+for(j=0;j<m;j++){
+
+if(need[i][j]>avail[j]){
+
+flag=1;
+
+break;
+
 }
-for(int k=0;k<n;k++)
-{
-wt[k]=tat[k]-bt[k];
-totalWT+=wt[k];
+
 }
-printf("Solution: \n\n");
-printf("P\t AT\t BT\t CT\t TAT\t WT\t\n\n");
-for(int i=0;i<n;i++)
-{
-printf("P%d\t %.2f\t %d\t %d\t %.2f\t %d\n",i+1,at[i],bt[i],ct[i],tat[i],wt[i]);
+
+if(flag==0){
+
+ans[ind++]=i;
+
+for(y=0;y<m;y++)
+
+avail[y]+=alloc[i][y];
+
+f[i]=1;
+
 }
-printf("\n\nAverage Turnaround time = %f\n",totalTAT/n);
-printf("Average WT = %f\n\n",totalWT/n);
+
+}
+
+}
+
+}
+
+int flag=1;
+
+for(int i=0;i<n;i++){
+
+if(f[i]==0){
+
+flag=0;
+
+printf("The folowing system is not safe");
+
+break;
+
+}
+
+}
+
+if(flag==1){
+
+printf("Following is the SAFE Sequence\n");
+
+for(i=0;i<n;i++)
+
+printf(" P%d ->",ans[i]);
+
+printf(" P%d",ans[n-1]);
+
+}
+
 return 0;
+
 }
-
-COMMANDS:
-skcet@sk-mca-507:~$ gedit FCFS.c
-skcet@sk-mca-507:~$ cc FCFS.c
-skcet@sk-mca-507:~$ ./a.out
-
-INPUT:
-___FCFS CPU SCHEDULING___
-
-Enter number of process 5
-Enter arrival time and burst  time for each process
-
-Arrival time of process[1]0.0
-Burst time of process[1] 10
-
-Arrival time of process[2]1.1
-Burst time of process[2] 5
-
-Arrival time of process[3]3.1
-Burst time of process[3] 2
-
-Arrival time of process[4]5.1
-Burst time of process[4] 7
-Arrival time of process[5]7.1
-Burst time of process[5] 5
